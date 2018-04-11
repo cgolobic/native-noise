@@ -9,8 +9,8 @@ NAN_METHOD(Generate) {
     0, 255, 0,
     0, 0, 255
   };
-  Local<ArrayBuffer> arrBuff = ArrayBuffer::New(info.GetIsolate(), pixelData, sizeof(pixelData));
-  info.GetReturnValue().Set(arrBuff);
+  auto buf = Nan::CopyBuffer((char *)&pixelData[0], sizeof(pixelData));
+  info.GetReturnValue().Set(buf.ToLocalChecked());
 }
 
 NAN_MODULE_INIT(Init) {
