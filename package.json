@@ -7,7 +7,8 @@
   "scripts": {
     "build": "node-gyp build",
     "config": "node-gyp configure",
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "start-gc": "node --expose-gc ./index.js"
   },
   "author": "cgolobic",
   "license": "MIT",
