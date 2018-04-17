@@ -6,6 +6,6 @@
   let context2d = canvas.getContext('2d');
   let rawBuffer = noise.generate();
   let arrayBufferView = new Uint8ClampedArray(rawBuffer);
-  let imgData = new ImageData(arrayBufferView, 3, 1);
+  let imgData = new ImageData(arrayBufferView, 100, 100);
   context2d.putImageData(imgData, 0, 0);
 </script>
