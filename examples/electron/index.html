@@ -1,11 +1,15 @@
-<h1>native-noise Example</h1>
+<!-- <h1>native-noise Example</h1> -->
 <canvas id="image"></canvas>
 <script>
   const noise = require('../../');
+  let z = 0.0;
+  let resultArrayBuffer = new Uint8ClampedArray(40000);
   let canvas = document.getElementById('image');
   let context2d = canvas.getContext('2d');
-  let rawBuffer = noise.generate();
-  let arrayBufferView = new Uint8ClampedArray(rawBuffer);
-  let imgData = new ImageData(arrayBufferView, 100, 100);
-  context2d.putImageData(imgData, 0, 0);
+  window.setInterval(() => {
+    z += 0.1;
+    noise.generateShared(resultArrayBuffer, 100, 100, z);
+    let imgData = new ImageData(resultArrayBuffer, 100, 100);
+    context2d.putImageData(imgData, 0, 0);
+  }, 100);
 </script>
