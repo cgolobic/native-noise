@@ -13,7 +13,13 @@ For debug builds:
 ## Debugging (Visual Studio Code)
 ### MacOS
 #### Electron
-TODO
+1) Start the example Electron app:
+```
+cd examples/electron
+npm start
+```
+2) In VS Code, select the `(lldb) Attach` debug configuration.
+3) Select the `Electron Helper` process started in step 1 from the list of processes.
 
 ### Windows
 #### Electron
