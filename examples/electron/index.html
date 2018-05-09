@@ -5,11 +5,14 @@
   let canvas = document.getElementById('image');
   let context2d = canvas.getContext('2d');
   let imageData = noise.load('./01_HiRes.png');
+  console.info('loaded image');
   canvas.setAttribute('width', `${imageData.w}px`);
   canvas.setAttribute('height', `${imageData.h}px`);
-  // Hot path, from(...) is taking about 5200ms alone
-  let imgData = new ImageData(Uint8ClampedArray.from(imageData.data), imageData.w, imageData.h);
+  // still takes about 1300ms to generate clamped array
+  let buffer = new Uint8ClampedArray(imageData.data);
+  let imgData = new ImageData(buffer, imageData.w, imageData.h);
   context2d.putImageData(imgData, 0, 0);
+  console.info('image rendered');
   // window.setInterval(() => {
   //   z += 0.1;
   //   noise.generateShared(resultArrayBuffer, 100, 100, z);

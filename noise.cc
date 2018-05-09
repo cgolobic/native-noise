@@ -70,12 +70,12 @@ NAN_METHOD(Load) {
   unsigned char *data = stbi_load(*s, &w, &h, &n, 4);
   std::cout << w << ',' << h << ',' << n << std::endl;
   auto buffer = Nan::NewBuffer((char *)data, w * h * 4, del_cb, data);
+  int size = w * h * 4;
+  auto arr = v8::Uint8ClampedArray::New(v8::ArrayBuffer::New(v8::Isolate::GetCurrent(), &data , size), 0, size);
   Nan::Set(img_data, Nan::New("w").ToLocalChecked(), Nan::New<v8::Integer>(w));
   Nan::Set(img_data, Nan::New("h").ToLocalChecked(), Nan::New<v8::Integer>(h));
+  //Nan::Set(img_data, Nan::New("data").ToLocalChecked(), arr);
   Nan::Set(img_data, Nan::New("data").ToLocalChecked(), buffer.ToLocalChecked());
-  
-  //img_data.data = buffer.ToLocalChecked();
-  //info.GetReturnValue().Set(img_data.ToLocalChecked());
   info.GetReturnValue().Set(img_data);
 }
 
