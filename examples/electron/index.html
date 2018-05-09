@@ -1,15 +1,19 @@
-<!-- <h1>native-noise Example</h1> -->
 <canvas id="image"></canvas>
 <script>
   const noise = require('../../');
   let z = 0.0;
-  let resultArrayBuffer = new Uint8ClampedArray(40000);
   let canvas = document.getElementById('image');
   let context2d = canvas.getContext('2d');
-  window.setInterval(() => {
-    z += 0.1;
-    noise.generateShared(resultArrayBuffer, 100, 100, z);
-    let imgData = new ImageData(resultArrayBuffer, 100, 100);
-    context2d.putImageData(imgData, 0, 0);
-  }, 100);
+  let imageData = noise.load('./01_HiRes.png');
+  canvas.setAttribute('width', `${imageData.w}px`);
+  canvas.setAttribute('height', `${imageData.h}px`);
+  // Hot path, from(...) is taking about 5200ms alone
+  let imgData = new ImageData(Uint8ClampedArray.from(imageData.data), imageData.w, imageData.h);
+  context2d.putImageData(imgData, 0, 0);
+  // window.setInterval(() => {
+  //   z += 0.1;
+  //   noise.generateShared(resultArrayBuffer, 100, 100, z);
+  //   let imgData = new ImageData(resultArrayBuffer, 100, 100);
+  //   context2d.putImageData(imgData, 0, 0);
+  // }, 100);
 </script>

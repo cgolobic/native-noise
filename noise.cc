@@ -1,8 +1,10 @@
 #define STB_PERLIN_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
 
 #include <nan.h>
 #include <iostream>
 #include "stb_perlin.h"
+#include "stb_image.h"
 using namespace std;
 using namespace Nan;
 using namespace v8;
@@ -46,11 +48,49 @@ NAN_METHOD(GenerateShared) {
   fill(sharedBuffer, width, height, z);
 }
 
+NAN_METHOD(Desaturate) {
+  unsigned char* sharedBuffer = (unsigned char*) node::Buffer::Data(info[0]->ToObject());
+  float r_sat = info[1]->NumberValue();
+  float g_sat = info[2]->NumberValue();
+  float b_sat = info[3]->NumberValue();
+  int width = info[4]->Uint32Value();
+  int height = info[5]->Uint32Value();
+  int l = width * height;
+  for(int i = 0; i < l; i++) {
+    sharedBuffer[i * 4] = sharedBuffer[i] * r_sat;
+    sharedBuffer[(i * 4) + 1] = sharedBuffer[i] * g_sat;
+    sharedBuffer[(i * 4) + 2] = sharedBuffer[i] * b_sat;
+  }
+}
+
+NAN_METHOD(Load) {
+  v8::Local<v8::Object> img_data = Nan::New<v8::Object>();
+  Nan::Utf8String s(info[0]);
+  int w, h, n;
+  unsigned char *data = stbi_load(*s, &w, &h, &n, 4);
+  std::cout << w << ',' << h << ',' << n << std::endl;
+  auto buffer = Nan::NewBuffer((char *)data, w * h * 4, del_cb, data);
+  Nan::Set(img_data, Nan::New("w").ToLocalChecked(), Nan::New<v8::Integer>(w));
+  Nan::Set(img_data, Nan::New("h").ToLocalChecked(), Nan::New<v8::Integer>(h));
+  Nan::Set(img_data, Nan::New("data").ToLocalChecked(), buffer.ToLocalChecked());
+  
+  //img_data.data = buffer.ToLocalChecked();
+  //info.GetReturnValue().Set(img_data.ToLocalChecked());
+  info.GetReturnValue().Set(img_data);
+}
+
 NAN_MODULE_INIT(Init) {
   Nan::Set(target, New<String>("generate").ToLocalChecked(),
     GetFunction(New<FunctionTemplate>(Generate)).ToLocalChecked());
+
   Nan::Set(target, New<String>("generateShared").ToLocalChecked(),
     GetFunction(New<FunctionTemplate>(GenerateShared)).ToLocalChecked());
+
+  Nan::Set(target, New<String>("desaturate").ToLocalChecked(),
+    GetFunction(New<FunctionTemplate>(Desaturate)).ToLocalChecked());
+
+  Nan::Set(target, New<String>("load").ToLocalChecked(),
+    GetFunction(New<FunctionTemplate>(Load)).ToLocalChecked());
 }
 
 NODE_MODULE(noise, Init);
