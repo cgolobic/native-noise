@@ -1,18 +1,24 @@
 <canvas id="image"></canvas>
 <script>
   const noise = require('../../');
+  const seg = require('segfault-handler');
+  seg.registerHandler('crash.log');
   let z = 0.0;
   let canvas = document.getElementById('image');
   let context2d = canvas.getContext('2d');
   let imageData = noise.load('./01_HiRes.png');
   console.info('loaded image');
+  console.log(imageData);
   canvas.setAttribute('width', `${imageData.w}px`);
   canvas.setAttribute('height', `${imageData.h}px`);
-  // still takes about 1300ms to generate clamped array
+  // takes about 1300ms to generate clamped array using constructor
   let buffer = new Uint8ClampedArray(imageData.data);
-  let imgData = new ImageData(buffer, imageData.w, imageData.h);
-  context2d.putImageData(imgData, 0, 0);
-  console.info('image rendered');
+  setTimeout(() =>{
+    //let imgData = new ImageData(imageData.data, imageData.w, imageData.h);
+    let imgData = new ImageData(buffer, imageData.w, imageData.h);
+    context2d.putImageData(imgData, 0, 0);
+    console.info('image rendered');
+  }, 0);
   // window.setInterval(() => {
   //   z += 0.1;
   //   noise.generateShared(resultArrayBuffer, 100, 100, z);

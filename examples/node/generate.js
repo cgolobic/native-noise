@@ -1,5 +1,7 @@
 const noise = require('../../');
+const seg = require('segfault-handler');
 
+seg.registerHandler('crashnode.log');
 var res = noise.generate();
 let arrayBufferView = new Uint8Array(res);
 for (var i = 0; i < arrayBufferView.length; i+=3) {
